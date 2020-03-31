@@ -1,54 +1,51 @@
-"""Class Database"""
+"""User's database"""
 
 import mysql.connector
-from mysql.connector import Error
 
-from param import DATABASE, FIRST_USE_SCRIPT
-
-# TODO : create a conneciton shareable between multiple class
+from param import FIRST_USE_SCRIPT
 
 
 class Database:
     """
-    This class represents the database used to store program's data
+    Database used to store program's data
     """
-    def __init__(self, database_name, connection):
+    def __init__(self, connection, config_database, database_name):
         self.database_name = database_name
+        self.config_database = config_database
         self.create(connection)
 
-    def create(self, connection):
+    def create(self, connection: mysql.connector.connect()):
         """
-        Function for full database creation.
+        Full user's database creation and register in setup database.
+
+        :rtype: None
         """
         self.create_database(connection)
 
         self.create_tables(connection)
 
-    def create_database(self, connection):
+        self.config_database.set_user_database(self.database_name)
+
+    def create_database(self, connection: mysql.connector.connect()):
         """
-        This function creates the database and set it in param.
+        Create user's database.
+
+        :rtype: None
         """
         cursor = connection.cursor()
 
-        # Database creation
         try:
             query = f"""CREATE DATABASE {self.database_name}"""
             cursor.execute(query)
-        except Error as e:
+        except mysql.connector.Error as e:
             print(f'Error while connecting to mysql: \n{e}')
-            return
 
-        # TODO: Check security advice on that
-        # Save database name in param
-        with open('./param.py', 'rt') as f:
-            params = f.read()
-            params = params.replace("''", f"'{self.database_name}'")
+    def create_tables(self, connection: mysql.connector.connect()):
+        """
+        User's database table creation.
 
-        with open('./param.py', 'wt') as f:
-            f.write(params)
-
-    def create_tables(self, connection):
-        """This function creates table from the script"""
+        :return: None
+        """
         cursor = connection.cursor()
 
         with open(FIRST_USE_SCRIPT, 'r') as f:
@@ -56,5 +53,5 @@ class Database:
             data = data.replace('mydb', self.database_name)
             try:
                 cursor.execute(data, multi=True)
-            except Error as e:
+            except mysql.connector.Error as e:
                 print(f'Error while creating tables: \n{e}')
