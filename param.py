@@ -2,6 +2,7 @@
 
 from os import getcwd
 
+# Set in Database
 DATABASE = ''
 FIRST_USE_SCRIPT = getcwd() + '/model/MCD.sql'
 

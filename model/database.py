@@ -3,7 +3,8 @@
 import mysql.connector
 from mysql.connector import Error
 
-from param import FIRST_USE_SCRIPT
+from param import DATABASE, FIRST_USE_SCRIPT
+
 # TODO : create a conneciton shareable between multiple class
 
 
@@ -11,15 +12,23 @@ class Database:
     """
     This class represents the database used to store program's data
     """
-    def __init__(self, database_name):
+    def __init__(self, database_name, connection):
         self.database_name = database_name
+        self.create(connection)
 
-    def create_database(self):
-        """This function creates the database and set it in param"""
-        conn = mysql.connector.connect(host='localhost',
-                                       user='root')
+    def create(self, connection):
+        """
+        Function for full database creation.
+        """
+        self.create_database(connection)
 
-        cursor = conn.cursor()
+        self.create_tables(connection)
+
+    def create_database(self, connection):
+        """
+        This function creates the database and set it in param.
+        """
+        cursor = connection.cursor()
 
         # Database creation
         try:
@@ -27,10 +36,8 @@ class Database:
             cursor.execute(query)
         except Error as e:
             print(f'Error while connecting to mysql: \n{e}')
-            conn.close()
             return
 
-        conn.close()
         # TODO: Check security advice on that
         # Save database name in param
         with open('./param.py', 'rt') as f:
@@ -40,19 +47,14 @@ class Database:
         with open('./param.py', 'wt') as f:
             f.write(params)
 
-    def create_tables(self):
+    def create_tables(self, connection):
         """This function creates table from the script"""
-        conn = mysql.connector.connect(database=self.database_name,
-                                       host='localhost',
-                                       user='root')
-
-        cursor = conn.cursor()
+        cursor = connection.cursor()
 
         with open(FIRST_USE_SCRIPT, 'r') as f:
             data = f.read()
             data = data.replace('mydb', self.database_name)
-            import pdb; pdb.set_trace()
-            cursor.execute(data, multi=True)
-
-        conn.close()
-
+            try:
+                cursor.execute(data, multi=True)
+            except Error as e:
+                print(f'Error while creating tables: \n{e}')
