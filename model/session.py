@@ -2,11 +2,13 @@
 
 import mysql.connector
 
+from param import DATABASE
+
 
 class Session:
     def __init__(self):
         self.connection = None
-        self.database = None
+        self.database = DATABASE
 
     def connect(self):
         """
