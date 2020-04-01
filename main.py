@@ -15,13 +15,19 @@ def main():
 
     try:
         session.connect()
-
+        
         if not DATABASE:
-            database_name = input("Please enter the database name: ")
-            Database(session.connection, database_name)
-
-        import pdb; pdb.set_trace()
-
+            while 1:
+                database_name = input("Please enter the database name: ")
+                validation = input(f"You typed {database_name}, is it ok? \n"
+                                   f"Y / N ")
+                validation = validation.upper()
+                if validation == 'Y':
+                    Database(session, database_name)
+                    break
+                elif validation != 'N':
+                    print(f"You entered {validation}, please type Y or N.")
+                    continue
     except Exception:
         session.close()
         raise

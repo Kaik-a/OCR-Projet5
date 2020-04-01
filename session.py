@@ -27,3 +27,15 @@ class Session:
         :return: None
         """
         self.connection.close()
+
+    def database_exists(self, database_name):
+        cursor = self.connection.cursor()
+
+        cursor.execute("""show databases""")
+
+        databases = cursor.fetchall()
+
+        for database in databases:
+            if database[0] == database_name:
+                return True
+        return False
