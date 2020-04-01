@@ -1,8 +1,8 @@
 """Main program file. To launch first."""
 
-from model.database import Database
+from database import Database
 
-from model.session import Session
+from session import Session
 from param import DATABASE
 
 
@@ -19,6 +19,8 @@ def main():
         if not DATABASE:
             database_name = input("Please enter the database name: ")
             Database(session.connection, database_name)
+
+        import pdb; pdb.set_trace()
 
     except Exception:
         session.close()
