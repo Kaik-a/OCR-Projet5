@@ -1,6 +1,7 @@
 """This class allows us to create the connection with mysql"""
 
 import mysql.connector
+from typing import List
 
 from param import DATABASE
 
@@ -39,3 +40,31 @@ class Session:
             if database[0] == database_name:
                 return True
         return False
+
+    def insert(self,
+               table: str,
+               columns: List,
+               data: List):
+        """
+        Insert in user's database.
+
+        :param table: table destination
+        :param columns: columns of the table
+        :param data: values inserted
+
+        :return: str
+        """
+
+        query = """INSERT INTO %s (%s) VALUES %s"""
+
+        cursor = self.connection.cusor()
+
+        try:
+            cursor.execute(query, (table, ', '.join(columns), ', '.join(data)))
+        except mysql.connector.Error as e:
+            print(f"Error while inserting data in table {table}: {e}")
+            cursor.close()
+
+        self.connection.commit()
+
+        cursor.close()

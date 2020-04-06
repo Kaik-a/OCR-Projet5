@@ -13,9 +13,9 @@ class Database:
     """
     def __init__(self, session, database_name):
         self.database_name = database_name
-        self.create_tables(session)
+        self.__create_tables(session)
 
-    def create_tables(self, session):
+    def __create_tables(self, session):
         """
         User's database table creation.
 
@@ -35,41 +35,19 @@ class Database:
         else:
             raise mysql.connector.Error(msg=f"Database {self.database_name} "
                                             f"not found, please check in mysql")
-
         cursor.close()
 
-    def insert(self,
-               session: Session(),
-               table: str,
-               data: tuple):
+        self.__save_user_database()
+
+    def __save_user_database(self):
         """
-        Insert in user's database.
+        Save user's database name in file
 
-        :param session: user's database connection
-        :param table: table where datas are inserted
-        :param data: values inserted
-        (column_name=value, column_name2=value2...)
-
-        :return: str
+        :return: None
         """
+        with open('./param.py', 'rt') as f:
+            params = f.read()
+            params = params.replace("''", f"'{self.database_name}'")
 
-        query = """INSERT INTO %s (%s) VALUES (%s)"""
-
-        columns, values = tuple
-
-        for value in data:
-            inserted_data = value.split('=')
-            columns += (inserted_data[0],)
-            values += (inserted_data[1],)
-
-        cursor = session.connection.cusor()
-
-        try:
-            cursor.execute(query, (table, columns, values))
-        except mysql.connector.Error as e:
-            print(f"Error while inserting data in table {table}: {e}")
-            cursor.close()
-
-        session.connection.commit()
-
-        cursor.close()
+        with open('./param.py', 'wt') as f:
+            f.write(params)
