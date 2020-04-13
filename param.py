@@ -3,7 +3,7 @@
 from os import getcwd
 
 # SQL
-DATABASE = ''
+DATABASE = 'test'
 FIRST_USE_SCRIPT = getcwd() + '/model/MCD.sql'
 
 # HTTP
@@ -14,7 +14,7 @@ SEARCH_URL = OPENFOODFACT_URL + 'cgi/search.pl'
 BASE_SEARCH_PARAMS = {'action': 'process',
                       'tagtype_0': 'categories',
                       'tagcontains_0': 'contains',
-                      'tag_0': '',
+                      'tag_0': 'test',
                       'page_size': 1000,
                       'sort_by': 'unique_scans_n',
                       'json': 1}

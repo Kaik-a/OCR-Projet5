@@ -3,12 +3,11 @@
 import mysql.connector
 from typing import List
 
-from param import DATABASE
-
 
 class Session:
     def __init__(self):
         self.connection = None
+        from param import DATABASE
         self.database = DATABASE
 
     def connect(self):
@@ -41,29 +40,46 @@ class Session:
                 return True
         return False
 
+    @staticmethod
+    def prepare_insert_statement(table: str,
+                                 columns: List) -> str:
+        """
+        Prepare the insert statement
+
+        :param table: Where to insert datas
+        :param columns: Columns of table
+        """
+        statement = f"""INSERT INTO {table} ({', '.join(columns)}) VALUES ("""
+
+        parameters: List[str] = []
+
+        i = 0
+        while i < len(columns):
+            parameters.append("%s")
+            i += 1
+
+        statement += ', '.join(parameters) + ')'
+
+        return statement
+
     def insert(self,
-               table: str,
-               columns: List,
-               data: List):
+               statement: str,
+               data: List) -> None:
         """
         Insert in user's database.
 
-        :param table: table destination
-        :param columns: columns of the table
+        :param statement: statement to insert
         :param data: values inserted
-
-        :return: str
         """
-
-        query = """INSERT INTO %s (%s) VALUES %s"""
-
-        cursor = self.connection.cusor()
+        cursor = self.connection.cursor()
 
         try:
-            cursor.execute(query, (table, ', '.join(columns), ', '.join(data)))
+            cursor.executemany(statement, data)
         except mysql.connector.Error as e:
-            print(f"Error while inserting data in table {table}: {e}")
+            print(f"Error while inserting data: {e}")
+            self.connection.rollback()
             cursor.close()
+            raise e
 
         self.connection.commit()
 

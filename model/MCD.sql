@@ -23,21 +23,20 @@ USE `mydb` ;
 DROP TABLE IF EXISTS `mydb`.`Products` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Products` (
-  `id` BINARY(16) NOT NULL,
-  `name` VARCHAR(255) NULL,
-  `brand` VARCHAR(100) NULL,
-  `nutriscore` VARCHAR(1) NULL,
-  `store` VARCHAR(255) NULL,
-  `packaging` VARCHAR(255) NULL,
-  `allergens` VARCHAR(255) NULL,
-  `nutrients` VARCHAR(255) NULL,
+  `id` BINARY(36) NOT NULL,
+  `product_name_fr` VARCHAR(255) NULL,
+  `brands` VARCHAR(100) NULL,
+  `nutriscore_grade` VARCHAR(100) NULL,
+  `categories_tags`VARCHAR(1000) NULL,
+  `stores_tags` VARCHAR(255) NULL,
+  `packaging_tags` VARCHAR(500) NULL,
   `url` VARCHAR(2083) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
 CREATE UNIQUE INDEX `idProducts_UNIQUE` ON `mydb`.`Products` (`id` ASC) VISIBLE;
 
-CREATE INDEX `name` ON `mydb`.`Products` (`name` ASC, `nutriscore` ASC) VISIBLE;
+CREATE INDEX `name` ON `mydb`.`Products` (`product_name_fr` ASC, `nutriscore_grade` ASC) VISIBLE;
 
 
 -- -----------------------------------------------------
@@ -46,7 +45,7 @@ CREATE INDEX `name` ON `mydb`.`Products` (`name` ASC, `nutriscore` ASC) VISIBLE;
 DROP TABLE IF EXISTS `mydb`.`Stores` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Stores` (
-  `id` BINARY(16) NOT NULL,
+  `id` BINARY(36) NOT NULL,
   `name` VARCHAR(255) NULL,
   `url` VARCHAR(2083) NULL,
   PRIMARY KEY (`id`))
@@ -63,8 +62,9 @@ CREATE INDEX `name` ON `mydb`.`Stores` (`name` ASC) VISIBLE;
 DROP TABLE IF EXISTS `mydb`.`Categories` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Categories` (
-  `id` BINARY(16) NOT NULL,
+  `id` BINARY(36) NOT NULL,
   `name` VARCHAR(255) NULL,
+  `off_id` VARCHAR(255) NULL,
   `url` VARCHAR(2083) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -78,8 +78,8 @@ CREATE INDEX `name` ON `mydb`.`Categories` (`name` ASC) VISIBLE;
 DROP TABLE IF EXISTS `mydb`.`Product_Category_Association` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Product_Category_Association` (
-  `product_id` BINARY(16) NOT NULL,
-  `category_id` BINARY(16) NOT NULL,
+  `product_id` BINARY(36) NOT NULL,
+  `category_id` BINARY(36) NOT NULL,
   PRIMARY KEY (`product_id`, `category_id`),
   CONSTRAINT `fk_product_category_id`
     FOREIGN KEY (`product_id`)
@@ -102,8 +102,8 @@ CREATE INDEX `category_fk_idx` ON `mydb`.`Product_Category_Association` (`catego
 DROP TABLE IF EXISTS `mydb`.`Product_Store_Association` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Product_Store_Association` (
-  `product_id` BINARY(16) NOT NULL,
-  `store_id` BINARY(16) NOT NULL,
+  `product_id` BINARY(36) NOT NULL,
+  `store_id` BINARY(36) NOT NULL,
   PRIMARY KEY (`product_id`, `store_id`),
   CONSTRAINT `fk_product_store_id`
     FOREIGN KEY (`product_id`)
@@ -126,8 +126,8 @@ CREATE INDEX `fk_store_id_idx` ON `mydb`.`Product_Store_Association` (`store_id`
 DROP TABLE IF EXISTS `mydb`.`Registered_Products` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`Registered_Products` (
-  `product_tested` BINARY(16) NOT NULL,
-  `product substitued` BINARY(16) NOT NULL,
+  `product_tested` BINARY(36) NOT NULL,
+  `product substitued` BINARY(36) NOT NULL,
   `date` DATETIME NULL,
   PRIMARY KEY (`product_tested`, `product substitued`),
   CONSTRAINT `fk_product_id_tested`
