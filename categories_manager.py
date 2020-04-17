@@ -1,5 +1,6 @@
 """class CategoryManager"""
 
+from dataclasses import dataclass
 from typing import Dict, List
 from uuid import uuid1
 
@@ -9,10 +10,10 @@ from model.category import Category
 from session import Session
 
 
+@dataclass
 class CategoryManager:
     """Manager for category class"""
-    def __init__(self):
-        self.table = "Categories"
+    table: str = "Categories"
 
     @staticmethod
     def get_from_openfoodfacts(categories_url: str) -> Dict:
@@ -24,7 +25,7 @@ class CategoryManager:
         return get(categories_url).json()['tags']
 
     @staticmethod
-    def convert_to_category(categories: List) -> List:
+    def convert_to_category(categories: Dict) -> List[Category]:
         """
         Convert list of dictionnaries to list of objects
 
@@ -43,7 +44,7 @@ class CategoryManager:
 
         return category_list
 
-    def insert_in_user_database(self,
+    def insert_in_database(self,
                                 categories: List[Category],
                                 session: Session) -> None:
         """
@@ -67,13 +68,3 @@ class CategoryManager:
 
         session.insert(stmt, values)
 
-    def get_categories_information_from_database(self,
-                                                 categories: List,
-                                                 session: Session) -> List:
-        """
-        Get categories's information from database.
-
-        :param categories: List of searched category
-        :param session: Session
-        """
-        pass

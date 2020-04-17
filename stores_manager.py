@@ -1,5 +1,6 @@
 """Class StoreManager"""
 
+from dataclasses import dataclass
 from requests import get
 from typing import List
 from uuid import uuid1
@@ -9,11 +10,10 @@ from model.store import Store
 from session import Session
 
 
+@dataclass
 class StoreManager:
     """Manager of stores"""
-
-    def __init__(self):
-        self.table = 'Stores'
+    table: str = 'Stores'
 
     @staticmethod
     def get_from_openfoodfacts(store_url: str) -> List:
@@ -41,9 +41,9 @@ class StoreManager:
 
         return store_list
 
-    def insert_in_user_database(self,
-                                session: Session,
-                                stores: List[Store]) -> None:
+    def insert_in_database(self,
+                           session: Session,
+                           stores: List[Store]) -> None:
         """
         Method to put all stores in database
 

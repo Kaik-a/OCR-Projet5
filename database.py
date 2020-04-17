@@ -1,5 +1,6 @@
 """User's database"""
 
+from importlib import reload
 import mysql.connector
 
 import param
@@ -53,6 +54,8 @@ class Database:
 
         param.DATABASE = self.database_name
 
+        reload(param)
+
     def populate(self,
                  category_manager: CategoryManager,
                  product_manager: ProductManager,
@@ -69,7 +72,7 @@ class Database:
         off_store = store_manager.get_from_openfoodfacts(param.STORES_JSON)
 
         off_product = \
-            product_manager.get_products_by_categories_from_openfoodfact(
+            product_manager.get_from_openfoodfact(
                 param.GIVEN_CATEGORIES,
                 param.SEARCH_URL,
                 param.BASE_SEARCH_PARAMS)
@@ -78,7 +81,7 @@ class Database:
         user_store = store_manager.convert_to_store(off_store)
         user_product = product_manager.convert_to_products(off_product)
 
-        category_manager.insert_in_user_database(user_cat, self.session)
-        store_manager.insert_in_user_database(self.session, user_store)
-        product_manager.insert_products_in_user_database(user_product,
-                                                         self.session)
+        category_manager.insert_in_database(user_cat, self.session)
+        store_manager.insert_in_database(self.session, user_store)
+        product_manager.insert_products_in_database(user_product,
+                                                    self.session)

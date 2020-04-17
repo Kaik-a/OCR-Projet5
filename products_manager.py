@@ -1,5 +1,6 @@
 """Class ProductManager"""
 
+from dataclasses import dataclass
 from requests import get
 from typing import Dict, List
 from uuid import uuid1
@@ -8,16 +9,15 @@ from model.product import Product
 from session import Session
 
 
+@dataclass
 class ProductManager:
     """Manager for class Product"""
-
-    def __init__(self):
-        self.table = 'Products'
+    table: str = 'Products'
 
     @staticmethod
-    def get_products_by_categories_from_openfoodfact(categories: List,
-                                                     openfoodfacts_url: str,
-                                                     parameters: Dict) -> List:
+    def get_from_openfoodfact(categories: List[str],
+                              openfoodfacts_url: str,
+                              parameters: Dict) -> List:
         """
         Get all the products from given categories in OpenFoodFact.
 
@@ -61,9 +61,9 @@ class ProductManager:
 
         return product_list
 
-    def insert_products_in_user_database(self,
-                                         products: List[Product],
-                                         session: Session) -> None:
+    def insert_products_in_database(self,
+                                    products: List[Product],
+                                    session: Session) -> None:
         """
         Insert products in user's database.
 
@@ -114,15 +114,54 @@ class ProductManager:
         # Insert Product_Store_Association
         session.insert(stmt_store_association, store_association)
 
-    def get_products_by_category_in_user_database(self,
-                                                  category: str,
-                                                  session: Session) -> Dict:
+    def get_bad_products(self,
+                         category: str,
+                         session: Session) -> List[Product]:
         """
-        Get products from given category in user database.
+        Get bad products from given category in user database.
 
         :param category: Category to filter on
         :param session: Session
         """
+        # TODO
         pass
 
+    def get_better_product(self,
+                           product: str,
+                           session: Session) -> Product:
+        """
+        Get a better product in replacement.
+
+        :param product: Product to replace.
+        :param session: Session.
+        :return: None
+        """
+        # TODO
+        pass
+
+    def save_product_replacement(self,
+                                 base_product: Product,
+                                 replacement_product: Product,
+                                 session: Session) -> None:
+        """
+        Save in database the product substitution.
+
+        :param base_product: Product to replace.
+        :param replacement_product: Product which replace.
+        :param session: Session.
+        :return: None
+        """
+        # TODO
+        pass
+
+    def get_saved_products(self,
+                           session: Session) -> List[Product]:
+        """
+        Get all previously saved products.
+
+        :param session: Session
+        :return: List[Product]
+        """
+        # TODO
+        pass
 

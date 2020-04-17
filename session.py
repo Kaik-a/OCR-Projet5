@@ -3,12 +3,12 @@
 import mysql.connector
 from typing import List
 
+from param import DATABASE
+
 
 class Session:
-    def __init__(self):
-        self.connection = None
-        from param import DATABASE
-        self.database = DATABASE
+    connection: mysql.connector.connection = None
+    database: str = DATABASE
 
     def connect(self):
         """
