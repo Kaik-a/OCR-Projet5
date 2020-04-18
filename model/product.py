@@ -5,7 +5,7 @@ class Product:
     """
     Product object of OpenFoodFact API
     """
-    def __init__(self, brands, categories_tags, nutriscore_grade,
+    def __init__(self, brands, categories_tags, id, nutriscore_grade,
                  packaging_tags, product_name_fr, stores_tags, url):
         """
         :param brands: brands making the product
@@ -16,7 +16,7 @@ class Product:
         :param stores_tags: stores selling the product
         :param url: url of the product on OpenFoodFact
         """
-        self.id = None
+        self.id = id or None
         self.brands = brands.upper()
         self.categories_tags = [category.upper() for
                                 category in categories_tags]

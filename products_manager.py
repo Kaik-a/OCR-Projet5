@@ -123,11 +123,41 @@ class ProductManager:
         :param category: Category to filter on
         :param session: Session
         """
-        # TODO
-        pass
+        stmt = """
+        SELECT 
+            p.brands,
+            '',
+            p.id,
+            p.nutriscore_grade,
+            p.packaging_tags,
+            p.product_name_fr,
+            '',
+            p.url            
+        FROM Product_Category_Association as pca 
+        INNER JOIN Products as p 
+            ON pca.product_id = p.id
+        INNER JOIN Categories as c 
+            ON pca.category_id = c.id 
+        WHERE 
+            pca.category_id = (SELECT id FROM Categories WHERE name = %s)
+        AND 'D' <= p.nutriscore_grade
+        LIMIT 10
+        """
+
+        cursor = session.connection.cursor()
+
+        cursor.execute(stmt, (category,))
+
+        bad_products: List[Product] = [Product(*args) for args in
+                                       cursor.fetchall()]
+
+        cursor.close()
+
+        # TODO: Randomize
+        return bad_products
 
     def get_better_product(self,
-                           product: str,
+                           product: Product,
                            session: Session) -> Product:
         """
         Get a better product in replacement.
@@ -136,8 +166,40 @@ class ProductManager:
         :param session: Session.
         :return: None
         """
-        # TODO
-        pass
+        stmt = """
+        SELECT 
+            p.brands,
+            '',
+            p.id,
+            p.nutriscore_grade,
+            p.packaging_tags,
+            p.product_name_fr,
+            '',
+            p.url            
+        FROM  Products as p 
+        INNER JOIN Product_Category_Association as pca 
+            ON pca.product_id = p.id
+        INNER JOIN Categories as c 
+            ON pca.category_id = c.id 
+        WHERE 
+            pca.category_id = (SELECT Category_id 
+                             FROM Product_Category_Association 
+                             WHERE Product_id = %s LIMIT 1)
+        AND 'B' >= p.nutriscore_grade
+        LIMIT 1
+        """
+
+        cursor = session.connection.cursor()
+
+        cursor.execute(stmt, (product.id,))
+
+        better_product = cursor.fetchall()
+
+        cursor.close()
+
+        product = Product(*better_product[0])
+
+        return product
 
     def save_product_replacement(self,
                                  base_product: Product,
@@ -151,17 +213,51 @@ class ProductManager:
         :param session: Session.
         :return: None
         """
-        # TODO
-        pass
+        stmt = """
+        INSERT INTO Registered_products 
+        VALUES (%s, %s, NOW())
+        """
+
+        cursor = session.connection.cursor()
+
+        try:
+            cursor.execute(stmt, (base_product, replacement_product))
+            print("Substitution correctement enregistrée")
+        except Exception as error:
+            print(f"Une erreur a été rencontrée: {error}")
+            session.connection.rollback()
+            cursor.close()
+            raise error
+
+        session.connection.commit()
+
+        cursor.close()
 
     def get_saved_products(self,
-                           session: Session) -> List[Product]:
+                           session: Session) -> List:
         """
         Get all previously saved products.
 
         :param session: Session
         :return: List[Product]
         """
-        # TODO
-        pass
+        stmt = """
+        SELECT 
+            p.product_name_fr,
+            p2.product_name_fr,
+            rp.date
+        FROM Registered_Products as rp 
+        INNER JOIN Products as p
+            ON rp.product_tested = p.id
+        INNER JOIN Products as p2 
+            ON rp.`product substitued` = p2.id        
+        """
+
+        cursor = session.connection.cursor()
+
+        cursor.execute(stmt)
+
+        registered = cursor.fetchall()
+
+        return registered
 
