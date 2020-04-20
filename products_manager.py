@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from requests import get
+from random import choice, choices
 from typing import Dict, List
 from uuid import uuid1
 
@@ -143,19 +144,17 @@ class ProductManager:
         WHERE 
             pca.category_id = (SELECT id FROM Categories WHERE name = %s)
         AND 'D' <= p.nutriscore_grade
-        LIMIT 10
         """
 
         cursor = session.connection.cursor()
 
         cursor.execute(stmt, (category,))
 
-        bad_products: List[Product] = [Product(*args) for args in
-                                       cursor.fetchall()]
+        bad_products: List[Product] = choices([Product(*args) for args in
+                                              cursor.fetchall()], k=10)
 
         cursor.close()
 
-        # TODO: Randomize
         return bad_products
 
     @staticmethod
@@ -192,20 +191,18 @@ class ProductManager:
                              FROM Product_Category_Association 
                              WHERE Product_id = %s LIMIT 1)
         AND 'B' >= p.nutriscore_grade
-        LIMIT 1
         """
 
         cursor = session.connection.cursor()
 
         cursor.execute(stmt, (product.id,))
 
-        better_product = cursor.fetchall()
+        better_product = choice([Product(*args) for args in
+                                cursor.fetchall()])
 
         cursor.close()
 
-        product = Product(*better_product[0])
-
-        return product
+        return better_product
 
     @staticmethod
     def save_product_replacement(base_product: Product,
