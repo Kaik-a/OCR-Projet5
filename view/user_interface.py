@@ -123,30 +123,14 @@ def navigate(product_manager: ProductManager,
                                 f"\n"))
 
         if choice == 1:
-            categories: Dict = {}
-            i = 0
-            for category in GIVEN_CATEGORIES:
-                categories[str(i + 1)] = category
-                i += 1
+            categories, category_choice = choose_category()
 
-            print("Veuillez choisir une categorie: ")
-            format_dict(categories)
-
-            category_choice = input()
             products: List = product_manager.get_bad_products(
                 category=categories[category_choice],
                 session=session
             )
-            product_dict: Dict = {}
-            i = 0
-            for product in products:
-                product_dict[i + 1] = product.product_name_fr
-                i += 1
 
-            print("Veuillez choisir un produit à substituer: ")
-            format_dict(product_dict)
-
-            product_choice = int(input())
+            product_choice = choose_product(products)
 
             product = product_manager.get_better_product(
                 products[product_choice - 1],
@@ -209,3 +193,45 @@ def format_dict(dictionnary: Dict):
     for key, value in dictionnary.items():
         print(key, '-', value)
     print("\n")
+
+
+def choose_category() -> tuple:
+    """
+    Get categories available
+    :return:
+    """
+    categories: Dict = {}
+    i = 0
+    for category in GIVEN_CATEGORIES:
+        categories[str(i + 1)] = category
+        i += 1
+
+    while 1:
+        print("Veuillez choisir une categorie: ")
+        format_dict(categories)
+
+        category_choice = input()
+
+        if category_choice in categories.keys():
+            return categories, category_choice
+
+
+def choose_product(products):
+    """
+    Choose a product from bad product list
+    :return:
+    """
+    product_dict: Dict = {}
+    i = 0
+    for product in products:
+        product_dict[i + 1] = product.product_name_fr
+        i += 1
+
+    while 1:
+        print("Veuillez choisir un produit à substituer: ")
+        format_dict(product_dict)
+
+        product_choice = int(input())
+
+        if product_choice in product_dict.keys():
+            return product_choice
