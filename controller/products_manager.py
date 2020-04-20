@@ -148,14 +148,10 @@ class ProductManager:
         AND 'D' <= p.nutriscore_grade
         """
 
-        cursor = session.connection.cursor()
-
-        cursor.execute(stmt, (category,))
+        products = session.select(stmt, (category,))
 
         bad_products: List[Product] = choices(
-            [Product(*args) for args in cursor.fetchall()], k=10)
-
-        cursor.close()
+            [Product(*args) for args in products], k=10)
 
         return bad_products
 
@@ -195,14 +191,10 @@ class ProductManager:
         AND 'B' >= p.nutriscore_grade
         """
 
-        cursor = session.connection.cursor()
-
-        cursor.execute(stmt, (product.id,))
+        products = session.select(stmt, (product.id,))
 
         better_product = choice(
-            [Product(*args) for args in cursor.fetchall()])
-
-        cursor.close()
+            [Product(*args) for args in products])
 
         return better_product
 
@@ -258,10 +250,4 @@ class ProductManager:
             ON rp.product_substitued = p2.id
         """
 
-        cursor = session.connection.cursor()
-
-        cursor.execute(stmt)
-
-        registered = cursor.fetchall()
-
-        return registered
+        return session.select(stmt)

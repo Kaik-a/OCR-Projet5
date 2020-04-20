@@ -1,6 +1,6 @@
 """This class allows us to create the connection with mysql"""
 
-from typing import List
+from typing import List, Optional
 
 import mysql.connector
 
@@ -91,3 +91,28 @@ class Session:
         self.connection.commit()
 
         cursor.close()
+
+    def select(self,
+               statement: str,
+               filters: Optional[tuple] = None) -> List:
+        """
+        Select in user's database.
+        :param statement: Statement to select
+        :param filters: Filters
+        :return: List
+        """
+        cursor = self.connection.cursor()
+
+        try:
+            if filters:
+                cursor.execute(statement, filters)
+            else:
+                cursor.execute(statement)
+        except mysql.connector.Error as error:
+            print(f"Error while retrieving data: {error}")
+            cursor.close()
+            raise error
+
+        results = cursor.fetchall()
+
+        return results
