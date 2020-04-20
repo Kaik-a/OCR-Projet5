@@ -1,12 +1,11 @@
 """User's database"""
 
-from importlib import reload
 import mysql.connector
 
-import param
 from categories_manager import CategoryManager
 from products_manager import ProductManager
 from stores_manager import StoreManager
+import param
 
 
 class Database:
@@ -53,8 +52,6 @@ class Database:
             file.write(params)
 
         param.DATABASE = self.database_name
-
-        reload(param)
 
     def populate(self,
                  category_manager: CategoryManager,

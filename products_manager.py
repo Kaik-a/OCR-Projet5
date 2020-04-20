@@ -53,6 +53,7 @@ class ProductManager:
                     and product.get('stores_tags')):
                 product_list.append(Product(product.get('brands'),
                                             product.get('categories_tags'),
+                                            '',
                                             product.get('nutriscore_grade'),
                                             product.get('packaging_tags'),
                                             product.get('product_name_fr'),
@@ -61,8 +62,8 @@ class ProductManager:
 
         return product_list
 
-    def insert_products_in_database(self,
-                                    products: List[Product],
+    @staticmethod
+    def insert_products_in_database(products: List[Product],
                                     session: Session) -> None:
         """
         Insert products in user's database.
@@ -80,12 +81,13 @@ class ProductManager:
         for product in products:
             id = str(uuid1())
             values.append((product.brands,
-                           str(product.categories_tags),
+                           ', '.join(product.categories_tags),
                            id,
                            product.nutriscore_grade,
-                           str(product.packaging_tags),
+                           ', '.join(product.packaging_tags)
+                           if product.packaging_tags else None,
                            product.product_name_fr,
-                           str(product.stores_tags),
+                           ', '.join(product.stores_tags),
                            product.url))
             for category in product.categories_tags:
                 category_association.append((id, category))
@@ -114,8 +116,8 @@ class ProductManager:
         # Insert Product_Store_Association
         session.insert(stmt_store_association, store_association)
 
-    def get_bad_products(self,
-                         category: str,
+    @staticmethod
+    def get_bad_products(category: str,
                          session: Session) -> List[Product]:
         """
         Get bad products from given category in user database.
@@ -156,8 +158,8 @@ class ProductManager:
         # TODO: Randomize
         return bad_products
 
-    def get_better_product(self,
-                           product: Product,
+    @staticmethod
+    def get_better_product(product: Product,
                            session: Session) -> Product:
         """
         Get a better product in replacement.
@@ -174,13 +176,17 @@ class ProductManager:
             p.nutriscore_grade,
             p.packaging_tags,
             p.product_name_fr,
-            '',
+            s.name,
             p.url            
         FROM  Products as p 
         INNER JOIN Product_Category_Association as pca 
             ON pca.product_id = p.id
         INNER JOIN Categories as c 
             ON pca.category_id = c.id 
+        INNER JOIN Product_Store_Association as psa
+            ON psa.product_id = p.id
+        INNER JOIN Stores as s 
+            ON psa.store_id = s.id
         WHERE 
             pca.category_id = (SELECT Category_id 
                              FROM Product_Category_Association 
@@ -201,8 +207,8 @@ class ProductManager:
 
         return product
 
-    def save_product_replacement(self,
-                                 base_product: Product,
+    @staticmethod
+    def save_product_replacement(base_product: Product,
                                  replacement_product: Product,
                                  session: Session) -> None:
         """
@@ -214,7 +220,7 @@ class ProductManager:
         :return: None
         """
         stmt = """
-        INSERT INTO Registered_products 
+        INSERT IGNORE INTO Registered_products 
         VALUES (%s, %s, NOW())
         """
 
@@ -233,8 +239,8 @@ class ProductManager:
 
         cursor.close()
 
-    def get_saved_products(self,
-                           session: Session) -> List:
+    @staticmethod
+    def get_saved_products(session: Session) -> List:
         """
         Get all previously saved products.
 
@@ -250,7 +256,7 @@ class ProductManager:
         INNER JOIN Products as p
             ON rp.product_tested = p.id
         INNER JOIN Products as p2 
-            ON rp.`product substitued` = p2.id        
+            ON rp.product_substitued = p2.id        
         """
 
         cursor = session.connection.cursor()
