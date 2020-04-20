@@ -24,3 +24,5 @@ GIVEN_CATEGORIES = ['Boissons',
                     'Plats préparés',
                     'Snacks',
                     'Viandes']
+ITEM_DISPLAYED = 10
+SEPARATION = "#################################################################"

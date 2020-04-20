@@ -7,7 +7,11 @@ from controller.database import Database
 from controller.products_manager import ProductManager
 from controller.session import Session
 from controller.stores_manager import StoreManager
-from param import DATABASE, GIVEN_CATEGORIES
+from param import (
+    DATABASE,
+    GIVEN_CATEGORIES,
+    SEPARATION
+)
 
 
 def define_database(category_manager: CategoryManager,
@@ -113,6 +117,7 @@ def navigate(product_manager: ProductManager,
     :return: Session
     """
     while 1:
+        print(SEPARATION)
         choice: int = int(input(f"\n"
                                 f"Tapez le numéro de la commande à "
                                 f"réaliser: \n"
@@ -129,23 +134,17 @@ def navigate(product_manager: ProductManager,
                 category=categories[category_choice],
                 session=session
             )
-
             product_choice = choose_product(products)
 
             product = product_manager.get_better_product(
                 products[product_choice - 1],
                 session
             )
+            print(SEPARATION)
+            print(product)
 
-            print(f"\n"
-                  f"INFORMATION PRODUIT SUBSTITUE \n"
-                  f"Nom: {product.product_name_fr} \n"
-                  f"Marque: {product.brands} \n"
-                  f"Nutriscore: {product.nutriscore_grade} \n"
-                  f"Magasin: {''.join(product.stores_tags)} \n"
-                  f"url: {product.url} \n"
-                  f"Mots-clés: {product.packaging_tags} \n")
             while 1:
+                print(SEPARATION)
                 save_choice = input(
                     f"\n"
                     f"Vous voulez-vous sauvegarder l'aliment"
@@ -172,11 +171,10 @@ def navigate(product_manager: ProductManager,
 
         elif choice == 2:
             registered = product_manager.get_saved_products(session)
-
+            print(SEPARATION)
             [print(f"\n"  # pylint: disable=W0106
                    f"Le produit {base_product} a été substitué par "
-                   f"{replacement_product} le {str(date)}"
-                   f"\n")
+                   f"{replacement_product} le {str(date)}")
              for base_product, replacement_product, date in registered]
         elif choice == 3:
             print("Au revoir !")
@@ -197,41 +195,65 @@ def format_dict(dictionnary: Dict):
 
 def choose_category() -> tuple:
     """
-    Get categories available
-    :return:
+    Get categories available.
+
+    :return: tuple (dict(categories), choice from user)
     """
-    categories: Dict = {}
-    i = 0
-    for category in GIVEN_CATEGORIES:
-        categories[str(i + 1)] = category
-        i += 1
+    categories: Dict = create_dict(GIVEN_CATEGORIES)
 
-    while 1:
-        print("Veuillez choisir une categorie: ")
-        format_dict(categories)
+    theme = "Veuillez choisir une categorie: "
 
-        category_choice = input()
-
-        if category_choice in categories.keys():
-            return categories, category_choice
+    return categories, validate_choice(categories, theme)
 
 
-def choose_product(products):
+def choose_product(products) -> int:
     """
     Choose a product from bad product list
-    :return:
+    :return: int
     """
-    product_dict: Dict = {}
-    i = 0
-    for product in products:
-        product_dict[i + 1] = product.product_name_fr
+    product_dict = create_dict([product.product_name_fr
+                                for product in products])
+
+    theme = "Veuillez choisir un produit à substituer: "
+
+    return validate_choice(product_dict, theme)
+
+
+def create_dict(list_to_transform: List) -> Dict:
+    """
+    Transform list to dict with numbers as keys
+    :param list_to_transform: List
+    :return: Dict
+    """
+    output_dict: Dict = {}
+    i = 1
+
+    for line in list_to_transform:
+        output_dict[i] = line
         i += 1
 
+    return output_dict
+
+
+def validate_choice(dict_choice: Dict,
+                    theme: str) -> int:
+    """
+    Validate users choice through a dict.
+    :param dict_choice: Dict containing proposals
+    :param theme: sentence to explain dict
+    :return: int
+    """
     while 1:
-        print("Veuillez choisir un produit à substituer: ")
-        format_dict(product_dict)
+        print(SEPARATION)
+        print("\n")
+        print(theme)
+        format_dict(dict_choice)
+        choice = input()
 
-        product_choice = int(input())
+        try:
+            choice = int(choice)
+        except ValueError:
+            continue
 
-        if product_choice in product_dict.keys():
-            return product_choice
+        if choice in dict_choice.keys():
+            return choice

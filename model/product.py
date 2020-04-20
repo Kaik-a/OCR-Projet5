@@ -27,3 +27,13 @@ class Product:  # pylint: disable=R0902,R0903
         self.product_name_fr = product_name_fr.upper()
         self.stores_tags = [store.upper() for store in stores_tags]
         self.url = url
+
+    def __repr__(self):
+        return(f"\n"
+               f"INFORMATION PRODUIT\n"
+               f"Nom: {self.product_name_fr} \n"
+               f"Marque: {self.brands} \n"
+               f"Nutriscore: {self.nutriscore_grade} \n"
+               f"Magasin: {''.join(self.stores_tags)} \n"
+               f"url: {self.url} \n"
+               f"Mots-clés: {self.packaging_tags} \n")

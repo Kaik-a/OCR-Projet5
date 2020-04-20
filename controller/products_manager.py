@@ -7,8 +7,9 @@ from uuid import uuid1
 from dataclasses import dataclass
 from requests import get
 
-from model.product import Product
 from controller.session import Session
+from model.product import Product
+from param import ITEM_DISPLAYED
 
 
 @dataclass
@@ -151,7 +152,7 @@ class ProductManager:
         products = session.select(stmt, (category,))
 
         bad_products: List[Product] = choices(
-            [Product(*args) for args in products], k=10)
+            [Product(*args) for args in products], k=ITEM_DISPLAYED)
 
         return bad_products
 
