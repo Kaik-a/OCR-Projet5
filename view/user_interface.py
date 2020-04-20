@@ -1,19 +1,19 @@
 """Module containing all user interface."""
 
-from typing import Callable, Dict, List
+from typing import Dict, List
 
-from categories_manager import CategoryManager
-from database import Database
+from controller.categories_manager import CategoryManager
+from controller.database import Database
+from controller.products_manager import ProductManager
+from controller.session import Session
+from controller.stores_manager import StoreManager
 from param import DATABASE, GIVEN_CATEGORIES
-from products_manager import ProductManager
-from session import Session
-from stores_manager import StoreManager
 
 
 def define_database(category_manager: CategoryManager,
                     product_manager: ProductManager,
                     session: Session,
-                    store_manager: StoreManager) -> None:
+                    store_manager: StoreManager) -> Session:
     """
     Format user's database to host application's data.
 
@@ -21,9 +21,9 @@ def define_database(category_manager: CategoryManager,
     :param product_manager: ProductManager
     :param session: Session
     :param store_manager: StoreManager
-    :return: None
+    :return: Session
     """
-    global DATABASE
+    global DATABASE  # pylint: disable=W0603
     while 1:
         database_name: str = input("Entrez le nom de la base de "
                                    "données: \n")
@@ -39,7 +39,8 @@ def define_database(category_manager: CategoryManager,
                                   product_manager,
                                   store_manager)
                 DATABASE = database_name
-                break
+
+                return session
             except Exception:
                 session.close()
                 raise
@@ -54,7 +55,7 @@ def define_database(category_manager: CategoryManager,
 def welcome(category_manager: CategoryManager,
             product_manager: ProductManager,
             session: Session,
-            store_manager: StoreManager) -> None:
+            store_manager: StoreManager) -> Session:
     """
     Function at the beginning of the program.
     It verifies if a database is already set in param.py and if it
@@ -66,7 +67,7 @@ def welcome(category_manager: CategoryManager,
     :param store_manager: StoreManager
     :return: None
     """
-    global DATABASE
+    global DATABASE  # pylint: disable=W0603
 
     while 1:
         print("\n"
@@ -77,40 +78,39 @@ def welcome(category_manager: CategoryManager,
               "\n")
 
         if not DATABASE:
-            define_database(category_manager,
-                            product_manager,
-                            session,
-                            store_manager
-                            )
+            new_session = define_database(category_manager,
+                                          product_manager,
+                                          session,
+                                          store_manager
+                                          )
+
+            return navigate(product_manager,
+                            new_session)
 
         answer = input(f"\n"
                        f"Nous avons trouvé la base de donéees: {DATABASE}, "
                        f"voulez-vous utiliser celle-ci ? "
                        f"\nO ou N?: \n"
                        f"\n")
-        if answer.upper() == 'O':
-            break
+        if answer.upper() == 'O':  # pylint: disable=R1705
+            return navigate(product_manager,
+                            session)
         elif answer.upper() == 'N':
             DATABASE = ''
-            continue
         else:
             print(f"\n"
                   f"Vous avez entré {answer}, merci d'utiliser O ou N "
                   f"\n")
-            continue
-
-    return choices(product_manager,
-                   session)
 
 
-def choices(product_manager: ProductManager,
-            session: Session) -> None:
+def navigate(product_manager: ProductManager,
+             session: Session) -> Session:
     """
     Function to navigate inside the program.
 
-    :param product_manager:
-    :param session:
-    :return: None
+    :param product_manager: ProductManager
+    :param session: Session
+    :return: Session
     """
     while 1:
         choice: int = int(input(f"\n"
@@ -171,7 +171,7 @@ def choices(product_manager: ProductManager,
                     f"\nO ou N?: \n"
                     f"\n")
 
-                if save_choice.upper() == 'O':
+                if save_choice.upper() == 'O':  # pylint: disable=R1723
                     product_manager.save_product_replacement(
                         products[product_choice - 1].id,
                         product.id,
@@ -189,14 +189,14 @@ def choices(product_manager: ProductManager,
         elif choice == 2:
             registered = product_manager.get_saved_products(session)
 
-            [print(f"\n"
+            [print(f"\n"  # pylint: disable=W0106
                    f"Le produit {base_product} a été substitué par "
                    f"{replacement_product} le {str(date)}"
                    f"\n")
              for base_product, replacement_product, date in registered]
         elif choice == 3:
             print("Au revoir !")
-            return
+            return session
         else:
             print(f"\n"
                   f"Vous avez entré {choice} alors qu'un chiffre entre 1"
@@ -205,8 +205,7 @@ def choices(product_manager: ProductManager,
 
 
 def format_dict(dictionnary: Dict):
+    """Format dictionnaries and add a blank line after."""
     for key, value in dictionnary.items():
         print(key, '-', value)
     print("\n")
-
-

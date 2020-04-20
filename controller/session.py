@@ -1,15 +1,15 @@
 """This class allows us to create the connection with mysql"""
 
-import mysql.connector
 from typing import List
 
-
+import mysql.connector
 
 
 class Session:
+    """Mysql Session"""
     def __init__(self):
         self.connection: mysql.connector.connection = None
-        from param import DATABASE
+        from param import DATABASE  # pylint: disable=C0415
         self.database: str = DATABASE
 
     def connect(self):
@@ -30,7 +30,12 @@ class Session:
         """
         self.connection.close()
 
-    def database_exists(self, database_name):
+    def database_exists(self, database_name: str) -> bool:
+        """
+        Check is database exists in mysql.
+        :param database_name: Name of the database to check
+        :return: bool
+        """
         cursor = self.connection.cursor()
 
         cursor.execute("""show databases""")
@@ -77,11 +82,11 @@ class Session:
 
         try:
             cursor.executemany(statement, data)
-        except mysql.connector.Error as e:
-            print(f"Error while inserting data: {e}")
+        except mysql.connector.Error as error:
+            print(f"Error while inserting data: {error}")
             self.connection.rollback()
             cursor.close()
-            raise e
+            raise error
 
         self.connection.commit()
 

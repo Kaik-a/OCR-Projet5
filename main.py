@@ -1,10 +1,10 @@
 """Main program file. To launch first."""
 
-from categories_manager import CategoryManager
-from products_manager import ProductManager
-from session import Session
-from stores_manager import StoreManager
-from user_interface import welcome
+from controller.categories_manager import CategoryManager
+from controller.products_manager import ProductManager
+from controller.session import Session
+from controller.stores_manager import StoreManager
+from view.user_interface import welcome
 
 
 def main():
@@ -19,11 +19,10 @@ def main():
     try:
         session.connect()
 
-        welcome(category_manager,
-                product_manager,
-                session,
-                store_manager)
-
+        session = welcome(category_manager,
+                          product_manager,
+                          session,
+                          store_manager)
     except Exception:
         session.close()
         raise

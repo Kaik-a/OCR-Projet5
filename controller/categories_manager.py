@@ -7,7 +7,7 @@ from uuid import uuid1
 from requests import get
 
 from model.category import Category
-from session import Session
+from controller.session import Session
 
 
 @dataclass
@@ -45,8 +45,8 @@ class CategoryManager:
         return category_list
 
     def insert_in_database(self,
-                                categories: List[Category],
-                                session: Session) -> None:
+                           categories: List[Category],
+                           session: Session) -> None:
         """
         Put categories in user's database
 
@@ -54,7 +54,7 @@ class CategoryManager:
         OpenFoodFacts
         :param session: Session
         """
-        columns = sorted([key for key in categories[0].__dict__.keys()])
+        columns = sorted(categories[0].__dict__.keys())
 
         values = []
 
@@ -67,4 +67,3 @@ class CategoryManager:
         stmt = session.prepare_insert_statement(self.table, columns)
 
         session.insert(stmt, values)
-

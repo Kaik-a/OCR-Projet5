@@ -1,13 +1,14 @@
 """Class ProductManager"""
 
-from dataclasses import dataclass
-from requests import get
 from random import choice, choices
 from typing import Dict, List
 from uuid import uuid1
 
+from dataclasses import dataclass
+from requests import get
+
 from model.product import Product
-from session import Session
+from controller.session import Session
 
 
 @dataclass
@@ -63,8 +64,8 @@ class ProductManager:
 
         return product_list
 
-    @staticmethod
-    def insert_products_in_database(products: List[Product],
+    def insert_products_in_database(self,
+                                    products: List[Product],
                                     session: Session) -> None:
         """
         Insert products in user's database.
@@ -72,7 +73,7 @@ class ProductManager:
         :param products: List of products to insert in database
         :param session: Session
         """
-        columns = sorted([key for key in products[0].__dict__.keys()])
+        columns = sorted(products[0].__dict__.keys())
 
         category_association = []
         store_association = []
@@ -80,10 +81,10 @@ class ProductManager:
         values = []
 
         for product in products:
-            id = str(uuid1())
+            product_id = str(uuid1())
             values.append((product.brands,
                            ', '.join(product.categories_tags),
-                           id,
+                           product_id,
                            product.nutriscore_grade,
                            ', '.join(product.packaging_tags)
                            if product.packaging_tags else None,
@@ -91,17 +92,18 @@ class ProductManager:
                            ', '.join(product.stores_tags),
                            product.url))
             for category in product.categories_tags:
-                category_association.append((id, category))
+                category_association.append((product_id, category))
             for store in product.stores_tags:
-                store_association.append((id, store))
+                store_association.append((product_id, store))
 
         stmt_category_association = """
-        INSERT IGNORE INTO Product_Category_Association 
+        INSERT IGNORE INTO Product_Category_Association
         (product_id, category_id)
         VALUES (%s, (SELECT id FROM Categories WHERE off_id = %s))
         """
 
-        stmt_store_association = """INSERT IGNORE INTO Product_Store_Association 
+        stmt_store_association = """
+        INSERT IGNORE INTO Product_Store_Association
         (product_id, store_id)
         VALUES (%s, (SELECT id FROM Stores WHERE name = %s))
         """
@@ -127,7 +129,7 @@ class ProductManager:
         :param session: Session
         """
         stmt = """
-        SELECT 
+        SELECT
             p.brands,
             '',
             p.id,
@@ -135,13 +137,13 @@ class ProductManager:
             p.packaging_tags,
             p.product_name_fr,
             '',
-            p.url            
-        FROM Product_Category_Association as pca 
-        INNER JOIN Products as p 
+            p.url
+        FROM Product_Category_Association as pca
+        INNER JOIN Products as p
             ON pca.product_id = p.id
-        INNER JOIN Categories as c 
-            ON pca.category_id = c.id 
-        WHERE 
+        INNER JOIN Categories as c
+            ON pca.category_id = c.id
+        WHERE
             pca.category_id = (SELECT id FROM Categories WHERE name = %s)
         AND 'D' <= p.nutriscore_grade
         """
@@ -150,8 +152,8 @@ class ProductManager:
 
         cursor.execute(stmt, (category,))
 
-        bad_products: List[Product] = choices([Product(*args) for args in
-                                              cursor.fetchall()], k=10)
+        bad_products: List[Product] = choices(
+            [Product(*args) for args in cursor.fetchall()], k=10)
 
         cursor.close()
 
@@ -168,7 +170,7 @@ class ProductManager:
         :return: None
         """
         stmt = """
-        SELECT 
+        SELECT
             p.brands,
             '',
             p.id,
@@ -176,19 +178,19 @@ class ProductManager:
             p.packaging_tags,
             p.product_name_fr,
             s.name,
-            p.url            
-        FROM  Products as p 
-        INNER JOIN Product_Category_Association as pca 
+            p.url
+        FROM  Products as p
+        INNER JOIN Product_Category_Association as pca
             ON pca.product_id = p.id
-        INNER JOIN Categories as c 
-            ON pca.category_id = c.id 
+        INNER JOIN Categories as c
+            ON pca.category_id = c.id
         INNER JOIN Product_Store_Association as psa
             ON psa.product_id = p.id
-        INNER JOIN Stores as s 
+        INNER JOIN Stores as s
             ON psa.store_id = s.id
-        WHERE 
-            pca.category_id = (SELECT Category_id 
-                             FROM Product_Category_Association 
+        WHERE
+            pca.category_id = (SELECT Category_id
+                             FROM Product_Category_Association
                              WHERE Product_id = %s LIMIT 1)
         AND 'B' >= p.nutriscore_grade
         """
@@ -197,8 +199,8 @@ class ProductManager:
 
         cursor.execute(stmt, (product.id,))
 
-        better_product = choice([Product(*args) for args in
-                                cursor.fetchall()])
+        better_product = choice(
+            [Product(*args) for args in cursor.fetchall()])
 
         cursor.close()
 
@@ -217,7 +219,7 @@ class ProductManager:
         :return: None
         """
         stmt = """
-        INSERT IGNORE INTO Registered_products 
+        INSERT IGNORE INTO Registered_products
         VALUES (%s, %s, NOW())
         """
 
@@ -245,15 +247,15 @@ class ProductManager:
         :return: List[Product]
         """
         stmt = """
-        SELECT 
+        SELECT
             p.product_name_fr,
             p2.product_name_fr,
             rp.date
-        FROM Registered_Products as rp 
+        FROM Registered_Products as rp
         INNER JOIN Products as p
             ON rp.product_tested = p.id
-        INNER JOIN Products as p2 
-            ON rp.product_substitued = p2.id        
+        INNER JOIN Products as p2
+            ON rp.product_substitued = p2.id
         """
 
         cursor = session.connection.cursor()
@@ -263,4 +265,3 @@ class ProductManager:
         registered = cursor.fetchall()
 
         return registered
-

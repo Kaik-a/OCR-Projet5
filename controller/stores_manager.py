@@ -1,13 +1,13 @@
 """Class StoreManager"""
 
-from dataclasses import dataclass
-from requests import get
 from typing import List
 from uuid import uuid1
 
-from model.product import Product
+from dataclasses import dataclass
+from requests import get
+
 from model.store import Store
-from session import Session
+from controller.session import Session
 
 
 @dataclass
@@ -51,7 +51,7 @@ class StoreManager:
         :param stores: list containing all stores on
         OpenFoodFacts
         """
-        columns = sorted([key for key in stores[0].__dict__.keys()])
+        columns = sorted(stores[0].__dict__.keys())
 
         values = []
 
@@ -61,14 +61,3 @@ class StoreManager:
         stmt = session.prepare_insert_statement(self.table, columns)
 
         session.insert(stmt, values)
-
-    def get_stores_for_product(self,
-                               product: Product,
-                               session: Session) -> List:
-        """
-
-        :param product: Product searched store
-        :param session: Seession
-        """
-        pass
-
