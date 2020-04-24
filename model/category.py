@@ -7,6 +7,7 @@ class Category:  # pylint: disable=R0903
         """
 
         :param name: name of the category
+        :param off_id: id of the category on OpenFoodFacts
         :param url: url of the category on OpenFoodFacts
         """
         self.id = None  # pylint: disable=C0103

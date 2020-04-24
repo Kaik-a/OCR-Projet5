@@ -27,6 +27,7 @@ class ProductManager:
         :param categories: List of given categories to filter
         :param openfoodfacts_url: url of Openfoodfacts API
         :param parameters: base_params
+        :return: List
         """
         products = []
 
@@ -42,9 +43,10 @@ class ProductManager:
     @staticmethod
     def convert_to_products(products: List) -> List[Product]:
         """
-        Convert list of dictionnaries to list of objects
+        Convert list of dictionnaries to list of Product.
 
         :param products: list containing dictionnaries
+        :return: List[Product]
         """
         product_list: List[Product] = []
 
@@ -73,6 +75,7 @@ class ProductManager:
 
         :param products: List of products to insert in database
         :param session: Session
+        :return: None
         """
         columns = sorted(products[0].__dict__.keys())
 
@@ -128,6 +131,7 @@ class ProductManager:
 
         :param category: Category to filter on
         :param session: Session
+        :return: List[Product]
         """
         stmt = """
         SELECT
@@ -162,8 +166,8 @@ class ProductManager:
         """
         Get a better product in replacement.
 
-        :param product: Product to replace.
-        :param session: Session.
+        :param product: Product to replace
+        :param session: Session
         :return: None
         """
         stmt = """
@@ -206,9 +210,9 @@ class ProductManager:
         """
         Save in database the product substitution.
 
-        :param base_product: Product to replace.
-        :param replacement_product: Product which replace.
-        :param session: Session.
+        :param base_product: Product to replace
+        :param replacement_product: Product which replace
+        :param session: Session
         :return: None
         """
         stmt = """

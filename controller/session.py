@@ -33,6 +33,7 @@ class Session:
     def database_exists(self, database_name: str) -> bool:
         """
         Check is database exists in mysql.
+
         :param database_name: Name of the database to check
         :return: bool
         """
@@ -51,7 +52,7 @@ class Session:
     def prepare_insert_statement(table: str,
                                  columns: List) -> str:
         """
-        Prepare the insert statement
+        Prepare the insert statement.
 
         :param table: Where to insert datas
         :param columns: Columns of table
@@ -97,6 +98,7 @@ class Session:
                filters: Optional[tuple] = None) -> List:
         """
         Select in user's database.
+
         :param statement: Statement to select
         :param filters: Filters
         :return: List

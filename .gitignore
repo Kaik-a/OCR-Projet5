@@ -3,3 +3,7 @@
 .DS_Store
 .idea
 __pycache__/
+/source/
+Makefile
+build/
+make.bat

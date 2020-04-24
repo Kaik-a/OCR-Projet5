@@ -1,13 +1,14 @@
-""""Class product"""
+"""Class product"""
+
+from typing import List
 
 
 class Product:  # pylint: disable=R0902,R0903
-    """
-    Product object of OpenFoodFact API
-    """
-    def __init__(self, brands, categories_tags, id, nutriscore_grade,
+    """Product"""
+    def __init__(self, brands: str, categories_tags: List, id: str,
                  # pylint: disable=R0913,W0622
-                 packaging_tags, product_name_fr, stores_tags, url):
+                 nutriscore_grade: str, packaging_tags: str,
+                 product_name_fr: str, stores_tags: List, url: str):
         """
         :param brands: brands making the product
         :param categories_tags: categories of the product
@@ -27,6 +28,7 @@ class Product:  # pylint: disable=R0902,R0903
         self.product_name_fr = product_name_fr.upper()
         self.stores_tags = [store.upper() for store in stores_tags]
         self.url = url
+        import pdb;pdb.set_trace()
 
     def __repr__(self):
         return(f"\n"

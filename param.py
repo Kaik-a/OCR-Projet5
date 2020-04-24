@@ -3,14 +3,13 @@
 from os import getcwd
 
 # SQL
-DATABASE = 'test'
-FIRST_USE_SCRIPT = getcwd() + '/model/MCD.sql'
+DATABASE = 'test'  # name of user's databae
+FIRST_USE_SCRIPT = getcwd() + '/model/MCD.sql'  # script to format database
 
 # HTTP
 OPENFOODFACT_URL = 'https://fr.openfoodfacts.org/'
-CATEGORIES_JSON = OPENFOODFACT_URL + 'categories.json'
-STORES_JSON = OPENFOODFACT_URL + 'stores.json'
-SEARCH_URL = OPENFOODFACT_URL + 'cgi/search.pl'
+CATEGORIES_JSON = OPENFOODFACT_URL + 'categories.json'  # url of categories
+STORES_JSON = OPENFOODFACT_URL + 'stores.json'  # url of stores
 BASE_SEARCH_PARAMS = {'action': 'process',
                       'tagtype_0': 'categories',
                       'tagcontains_0': 'contains',
@@ -19,10 +18,10 @@ BASE_SEARCH_PARAMS = {'action': 'process',
                       'sort_by': 'unique_scans_n',
                       'json': 1}
 # Presets
-GIVEN_CATEGORIES = ['Boissons',
+GIVEN_CATEGORIES = ['Boissons',  # Categories preset
                     'Fromages',
                     'Plats préparés',
                     'Snacks',
                     'Viandes']
-ITEM_DISPLAYED = 10
+ITEM_DISPLAYED = 10  # Number of items displayed while looking for bad product
 SEPARATION = "#################################################################"

@@ -187,7 +187,12 @@ def navigate(product_manager: ProductManager,
 
 
 def format_dict(dictionnary: Dict):
-    """Format dictionnaries and add a blank line after."""
+    """
+    Format dictionnaries and add a blank line after.
+
+    :param dictionnary: Dictionnary to format
+    :return: None
+    """
     for key, value in dictionnary.items():
         print(key, '-', value)
     print("\n")
@@ -195,7 +200,7 @@ def format_dict(dictionnary: Dict):
 
 def choose_category() -> tuple:
     """
-    Get categories available.
+    Choose category from categories available.
 
     :return: tuple (dict(categories), choice from user)
     """
@@ -208,7 +213,9 @@ def choose_category() -> tuple:
 
 def choose_product(products) -> int:
     """
-    Choose a product from bad product list
+    Choose a product from bad product list.
+
+    :param products: List of products
     :return: int
     """
     product_dict = create_dict([product.product_name_fr
@@ -221,7 +228,8 @@ def choose_product(products) -> int:
 
 def create_dict(list_to_transform: List) -> Dict:
     """
-    Transform list to dict with numbers as keys
+    Transform list to dict with numbers as keys.
+
     :param list_to_transform: List
     :return: Dict
     """
@@ -238,7 +246,8 @@ def create_dict(list_to_transform: List) -> Dict:
 def validate_choice(dict_choice: Dict,
                     theme: str) -> int:
     """
-    Validate users choice through a dict.
+    Validate users choice through a dict a return the number of the answer.
+
     :param dict_choice: Dict containing proposals
     :param theme: sentence to explain dict
     :return: int

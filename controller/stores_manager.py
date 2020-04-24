@@ -18,18 +18,20 @@ class StoreManager:
     @staticmethod
     def get_from_openfoodfacts(store_url: str) -> List:
         """
-        Method to get all the stores contained in OpenFoodFacts
+        Method to get all the stores contained in OpenFoodFacts.
 
         :param store_url: URL of stores on OpenFoodFact
+        :return: List
         """
         return get(store_url).json()['tags']
 
     @staticmethod
-    def convert_to_store(stores: List) -> List:
+    def convert_to_store(stores: List) -> List[Store]:
         """
-        Convert list of dictionnaries to list of objects
+        Convert list of dictionnaries to list of objects.
 
         :param stores: list containing dictionnaries
+        :return: List[Store]
         """
         store_list: List[Store] = []
 
@@ -45,11 +47,11 @@ class StoreManager:
                            session: Session,
                            stores: List[Store]) -> None:
         """
-        Method to put all stores in database
+        Method to put all stores in database.
 
         :param session: Session
-        :param stores: list containing all stores on
-        OpenFoodFacts
+        :param stores: list containing all stores on OpenFoodFacts
+        :return: None
         """
         columns = sorted(stores[0].__dict__.keys())
 

@@ -8,6 +8,7 @@ from controller.categories_manager import CategoryManager
 from controller.products_manager import ProductManager
 from controller.stores_manager import StoreManager
 import param
+from controller.session import Session
 
 
 class Database:  # pylint: disable=R0903
@@ -15,15 +16,16 @@ class Database:  # pylint: disable=R0903
     Database used to store program's data
     """
     def __init__(self, session, database_name):
-        self.database_name = database_name
-        self.session = session
+        self.database_name: str = database_name
+        self.session: Session = session
         self.__create_tables(session)
 
     def __create_tables(self, session) -> None:
         """
-        User's database table creation.
+        User's database tables creation.
 
         :param session: user's database connection
+        :return: None
         """
         cursor = session.connection.cursor()
 
@@ -45,7 +47,9 @@ class Database:  # pylint: disable=R0903
 
     def __save_user_database(self) -> None:
         """
-        Save user's database name in file.
+        Save user's database name in param file.
+
+        :return: None
         """
         with open(param.__file__, 'rt') as file:
             params = file.read()
@@ -66,6 +70,7 @@ class Database:  # pylint: disable=R0903
         :param category_manager: categories from OFF
         :param product_manager: products from OOF
         :param store_manager: stores from OOF
+        :return: None
         """
         off_data: Dict = self.__get_all_data(category_manager,
                                              product_manager,
@@ -118,7 +123,7 @@ class Database:  # pylint: disable=R0903
         Convert all dict to objects according to the key.
 
         :param category_manager: CategoryManager
-        :param object_dict: Dictionnary containing lines to convert.
+        :param object_dict: Dictionnary containing lines to convert
         :param product_manager: ProductManager
         :param store_manager: StoreManager
         :return: Dict
