@@ -10,6 +10,7 @@ FIRST_USE_SCRIPT = getcwd() + '/model/MCD.sql'  # script to format database
 OPENFOODFACT_URL = 'https://fr.openfoodfacts.org/'
 CATEGORIES_JSON = OPENFOODFACT_URL + 'categories.json'  # url of categories
 STORES_JSON = OPENFOODFACT_URL + 'stores.json'  # url of stores
+SEARCH_URL = OPENFOODFACT_URL + 'cgi/search.pl'
 BASE_SEARCH_PARAMS = {'action': 'process',
                       'tagtype_0': 'categories',
                       'tagcontains_0': 'contains',

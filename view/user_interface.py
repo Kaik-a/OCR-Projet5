@@ -64,12 +64,13 @@ def welcome(category_manager: CategoryManager,
     Function at the beginning of the program.
     It verifies if a database is already set in param.py and if it
     exists.
+    If all is ok, navigate function is launched.
 
     :param category_manager: CategoryManager
     :param product_manager: ProductManager
     :param session: Session
     :param store_manager: StoreManager
-    :return: None
+    :return: Session
     """
     global DATABASE  # pylint: disable=W0603
 
