@@ -21,6 +21,7 @@ class Session:
         """
         while 1:
             connect_to: str = f"{self.database}" if self.database else 'MySQL'
+
             user = input(f"Veuillez renseigner l'utilisateur pour se connecter"
                          f" à {connect_to}, si vous voulez utiliser root, "
                          f"appuyer sur Entrée : \n")
@@ -40,6 +41,19 @@ class Session:
                 print(f"Nous avons rencontré une erreur lors de la connexion "
                       f"avec l'utilisateur {user}, veuillez vérifier vos "
                       f"informations. \n {error}")
+                if self.database:
+                    while 1:
+                        answer = input(f"La base {self.database} existe? \n"
+                                       f"O ou N\n")
+                        if answer == 'O':
+                            break
+                        elif answer == 'N':
+                            self.database = ''
+                            break
+                        else:
+                            print(f"Vous avez entré {answer}, merci d'entrer O "
+                                  f"ou N")
+                            continue
         user = None
         password = None
 
