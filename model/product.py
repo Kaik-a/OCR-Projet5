@@ -28,7 +28,6 @@ class Product:  # pylint: disable=R0902,R0903
         self.product_name_fr = product_name_fr.upper()
         self.stores_tags = [store.upper() for store in stores_tags]
         self.url = url
-        import pdb;pdb.set_trace()
 
     def __repr__(self):
         return(f"\n"

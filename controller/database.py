@@ -7,8 +7,8 @@ import mysql.connector
 from controller.categories_manager import CategoryManager
 from controller.products_manager import ProductManager
 from controller.stores_manager import StoreManager
-import param
 from controller.session import Session
+import param
 
 
 class Database:  # pylint: disable=R0903
@@ -53,7 +53,8 @@ class Database:  # pylint: disable=R0903
         """
         with open(param.__file__, 'rt') as file:
             params = file.read()
-            params = params.replace("''", f"'{self.database_name}'")
+            params = params.replace("DATABASE = ''",
+                                    f"DATABASE = '{self.database_name}'")
 
         with open(param.__file__, 'wt') as file:
             file.write(params)
@@ -72,6 +73,10 @@ class Database:  # pylint: disable=R0903
         :param store_manager: stores from OOF
         :return: None
         """
+        print("\n"
+              "Veuillez patienter..."
+              "\n")
+
         off_data: Dict = self.__get_all_data(category_manager,
                                              product_manager,
                                              store_manager)

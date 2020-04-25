@@ -1,5 +1,6 @@
 """This class allows us to create the connection with mysql"""
 
+from getpass import getpass
 from typing import List, Optional
 
 import mysql.connector
@@ -18,9 +19,29 @@ class Session:
 
         :return: None
         """
-        self.connection = mysql.connector.connect(database=self.database,
-                                                  host='localhost',
-                                                  user='root')
+        while 1:
+            connect_to: str = f"{self.database}" if self.database else 'MySQL'
+            user = input(f"Veuillez renseigner l'utilisateur pour se connecter"
+                         f" à {connect_to}, si vous voulez utiliser root, "
+                         f"appuyer sur Entrée : \n")
+            user = user if user else 'root'
+            password = getpass(f"Veuillez renseignez le mot de passe de "
+                               f"l'utilisateur {user}, s'il n'y en a pas, "
+                               f"appuyez sur Entrée :\n")
+            try:
+                self.connection = mysql.connector.connect(
+                    database=self.database,
+                    host='localhost',
+                    password=password,
+                    user=user
+                )
+                break
+            except mysql.connector.Error as error:
+                print(f"Nous avons rencontré une erreur lors de la connexion "
+                      f"avec l'utilisateur {user}, veuillez vérifier vos "
+                      f"informations. \n {error}")
+        user = None
+        password = None
 
     def close(self):
         """

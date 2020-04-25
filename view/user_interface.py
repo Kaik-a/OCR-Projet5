@@ -31,7 +31,6 @@ def define_database(category_manager: CategoryManager,
     while 1:
         database_name: str = input("Entrez le nom de la base de "
                                    "données: \n")
-
         if session.database_exists(database_name):
             database = Database(session, database_name)
             session.close()
@@ -50,7 +49,7 @@ def define_database(category_manager: CategoryManager,
                 raise
         else:
             print(f"\n"
-                  f"Vous avez tapé {database_name} mais celle-ci"
+                  f"Vous avez tapé {database_name} mais celle-ci "
                   f"n'est pas présente dans mysql. Merci de "
                   f"vérifier "
                   f"\n")
@@ -76,7 +75,7 @@ def welcome(category_manager: CategoryManager,
 
     while 1:
         print("\n"
-              "Vous devez avoir déjà créé votre base de données dans mysql"
+              "Vous devez avoir déjà créé votre base de données dans mysql "
               "pour utiliser ce programme. Si ce n'est pas le cas et que "
               "vous souhaitez de l'aide, referrez-vous au README à la "
               "racine du projet."

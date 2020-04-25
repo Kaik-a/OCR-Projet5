@@ -25,4 +25,4 @@ GIVEN_CATEGORIES = ['Boissons',  # Categories preset
                     'Snacks',
                     'Viandes']
 ITEM_DISPLAYED = 10  # Number of items displayed while looking for bad product
-SEPARATION = "#################################################################"
+SEPARATION = "################################################################"
