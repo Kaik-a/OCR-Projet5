@@ -3,7 +3,7 @@
 from os import getcwd
 
 # SQL
-DATABASE = 'test'  # name of user's databae
+DATABASE = ''  # name of user's databae
 FIRST_USE_SCRIPT = getcwd() + '/model/MCD.sql'  # script to format database
 
 # HTTP
